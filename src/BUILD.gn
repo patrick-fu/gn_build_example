@@ -1,0 +1,35 @@
+import("src_build_args.gni")
+
+# Set root include
+# No need to include root path, GN have included it by default
+#
+# config("gbe_root_include_config") {
+#   include_dirs = [
+#     rebase_path("..")
+#   ]
+# }
+
+group("src") {
+  deps = []
+  if (target_os == "ios") {
+    if (build_ios_objc_shared) {
+      deps += [ "//src/platform/darwin/GNBuildExample:gbe_ios_objc_shared_framework" ]
+    } else if (build_ios_objc_static) {
+      deps += [ "//src/platform/darwin/GNBuildExample:gbe_ios_objc_static_library" ]
+    } else if (build_ios_common_shared) {
+      deps += [ "//src/common:gbe_ios_common_shared_framework" ]
+    } else if (build_ios_common_static) {
+      deps += [ "//src/common:gbe_ios_common_static_library" ]
+    }
+  } else if (target_os == "mac") {
+    if (build_mac_objc_shared) {
+      deps += [ "//src/platform/darwin/GNBuildExample:gbe_mac_objc_shared_framework" ]
+    } else if (build_mac_objc_static) {
+      deps += [ "//src/platform/darwin/GNBuildExample:gbe_mac_objc_static_library" ]
+    } else if (build_mac_common_shared) {
+      deps += [ "//src/common:gbe_mac_common_shared_framework" ]
+    } else if (build_mac_common_static) {
+      deps += [ "//src/common:gbe_mac_common_static_library" ]
+    }
+  }
+}

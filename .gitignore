@@ -1,0 +1,9 @@
+# base
+.DS_Store
+.idea/
+.vscode/
+.vs/
+__pycache__
+
+# builds
+_out/

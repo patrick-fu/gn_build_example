@@ -1,0 +1,5 @@
+group("module") {
+  public_deps = [
+    "base64",
+  ]
+}

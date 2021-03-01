@@ -1,0 +1,125 @@
+import("//src/src_build_args.gni")
+
+#######################
+### Common C Source ###
+#######################
+
+_gbe_common_public_headers = [
+  "include/gn_build_example_defines.h",
+  "include/gn_build_example.h",
+]
+
+source_set("gbe_common_source") {
+  deps = [
+    "module",
+  ]
+
+  sources = [
+      "impl/gn_build_example.cc"
+  ]
+  sources += _gbe_common_public_headers
+
+  public = _gbe_common_public_headers
+
+  # No need to include root path, GN have included it by default
+  # public_configs = [ "//src:gbe_root_include_config" ]
+}
+
+
+####################################
+### iOS / macOS Common Framework ###
+####################################
+
+if (target_os == "ios") {
+  import("//build/config/ios/rules.gni")
+
+  if (build_ios_common_shared) {
+    ios_framework_bundle("gbe_ios_common_shared_framework") {
+      output_name = "GNBuildExample"
+      info_plist = "//src/platform/darwin/GNBuildExample/Info-iOS.plist"
+
+      deps = [
+        "//src/common:gbe_common_source",
+      ]
+
+      frameworks = [ "Foundation.framework" ]
+
+      public_headers = _gbe_common_public_headers
+      sources = public_headers
+    }
+  }
+
+  if (build_ios_common_static) {
+    static_library("gbe_ios_common_static_library") {
+      output_name = "GNBuildExample"
+
+      complete_static_lib = true
+      configs -= [ "//build/config/compiler:thin_archive" ]
+
+      deps = [
+        "//src/common:gbe_common_source",
+      ]
+
+      # Copy common headers to output dir
+      deps += [ ":gbe_ios_common_static_library_headers" ]
+
+      output_dir = "$root_out_dir"
+    }
+
+    copy("gbe_ios_common_static_library_headers") {
+      visibility = [ ":*" ]
+      sources = _gbe_common_public_headers
+      outputs = [ "$root_out_dir/include/{{source_file_part}}" ]
+    }
+  }
+}
+
+if (target_os == "mac") {
+  import("//build/config/mac/rules.gni")
+
+  if (build_mac_common_shared) {
+    mac_framework_bundle("gbe_mac_common_shared_framework") {
+      output_name = "GNBuildExample"
+      info_plist = "//src/platform/darwin/GNBuildExample/Info-macOS.plist"
+      framework_version = "A"
+
+      deps = [
+        "//src/common:gbe_common_source",
+      ]
+
+      frameworks = [ "Foundation.framework" ]
+
+      public_headers = _gbe_common_public_headers
+      sources = public_headers
+
+      framework_contents = [
+        "Resources",
+        "Headers"
+      ]
+    }
+  }
+
+  if (build_mac_common_static) {
+    static_library("gbe_mac_common_static_library") {
+      output_name = "GNBuildExample"
+
+      complete_static_lib = true
+      configs -= [ "//build/config/compiler:thin_archive" ]
+
+      deps = [
+        "//src/common:gbe_common_source",
+      ]
+
+      # Copy common headers to output dir
+      deps += [ ":gbe_mac_common_static_library_headers" ]
+
+      output_dir = "$root_out_dir"
+    }
+
+    copy("gbe_mac_common_static_library_headers") {
+      visibility = [ ":*" ]
+      sources = _gbe_common_public_headers
+      outputs = [ "$root_out_dir/include/{{source_file_part}}" ]
+    }
+  }
+}

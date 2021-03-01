@@ -1,0 +1,132 @@
+import("//src/src_build_args.gni")
+
+##################################
+### Objective-C Wrapper Source ###
+##################################
+
+_gbe_objc_public_headers = [
+  "include/GNBuildExampleDefines.h",
+  "include/GNBuildExample.h",
+]
+
+source_set("gbe_objc_source") {
+  visibility = [ ":*" ]
+
+  sources = [
+    "impl/GNBuildExample.m",
+  ]
+  sources += _gbe_objc_public_headers
+
+  public = _gbe_objc_public_headers
+
+  deps = [
+    "//src/common:gbe_common_source",
+  ]
+
+  configs -= [
+    "//build/config/gcc:symbol_visibility_hidden",
+  ]
+  configs += [
+    "//build/config/compiler:enable_arc",
+    "//build/config/gcc:symbol_visibility_default",
+  ]
+}
+
+
+#################################################
+### iOS / macOS Objective-C Wrapper Framework ###
+#################################################
+
+if (target_os == "ios") {
+  import("//build/config/ios/rules.gni")
+
+  if (build_ios_objc_shared) {
+    ios_framework_bundle("gbe_ios_objc_shared_framework") {
+      output_name = "GNBuildExample"
+      info_plist = "Info-iOS.plist"
+
+      deps = [
+        "//src/platform/darwin/GNBuildExample:gbe_objc_source",
+      ]
+
+      frameworks = [ "Foundation.framework" ]
+
+      public_headers = _gbe_objc_public_headers
+      sources = public_headers
+    }
+  }
+
+  if (build_ios_objc_static) {
+    static_library("gbe_ios_objc_static_library") {
+      output_name = "GNBuildExample"
+
+      complete_static_lib = true
+      configs -= [ "//build/config/compiler:thin_archive" ]
+
+      deps = [
+        "//src/platform/darwin/GNBuildExample:gbe_objc_source",
+      ]
+
+      # Copy Objective-C headers to output dir
+      deps += [ ":gbe_ios_objc_static_library_headers" ]
+
+      output_dir = "$root_out_dir"
+    }
+
+    copy("gbe_ios_objc_static_library_headers") {
+      visibility = [ ":*" ]
+      sources = _gbe_objc_public_headers
+      outputs = [ "$root_out_dir/include/{{source_file_part}}" ]
+    }
+  }
+}
+
+if (target_os == "mac") {
+  import("//build/config/mac/rules.gni")
+
+  if (build_mac_objc_shared) {
+    mac_framework_bundle("gbe_mac_objc_shared_framework") {
+      output_name = "GNBuildExample"
+      info_plist = "Info-macOS.plist"
+      framework_version = "A"
+
+      deps = [
+        "//src/platform/darwin/GNBuildExample:gbe_objc_source",
+      ]
+
+      frameworks = [ "Foundation.framework" ]
+
+      public_headers = _gbe_objc_public_headers
+      sources = public_headers
+
+      framework_contents = [
+        "Resources",
+        "Headers"
+      ]
+    }
+  }
+
+  if (build_mac_objc_static) {
+    static_library("gbe_mac_objc_static_library") {
+      output_name = "GNBuildExample"
+
+      complete_static_lib = true
+      configs -= [ "//build/config/compiler:thin_archive" ]
+
+      deps = [
+        "//src/platform/darwin/GNBuildExample:gbe_objc_source",
+      ]
+
+      # Copy Objective-C headers to output dir
+      deps += [ ":gbe_mac_objc_static_library_headers" ]
+
+      output_dir = "$root_out_dir"
+    }
+
+    copy("gbe_mac_objc_static_library_headers") {
+      visibility = [ ":*" ]
+      sources = _gbe_objc_public_headers
+      outputs = [ "$root_out_dir/include/{{source_file_part}}" ]
+    }
+  }
+}

@@ -1,0 +1,28 @@
+
+declare_args() {
+  # Whether to build iOS Common shared Framework
+  build_ios_common_shared = false
+
+  # Whether to build iOS Objc Wrapper shared Framework
+  build_ios_objc_shared = false
+
+  # Whether to build iOS Common static library
+  build_ios_common_static = false
+
+  # Whether to build iOS Objc Wrapper static library
+  build_ios_objc_static = false
+}
+
+declare_args() {
+  # Whether to build macOS Common shared Framework
+  build_mac_common_shared = false
+
+  # Whether to build macOS Objc Wrapper shared Framework
+  build_mac_objc_shared = false
+
+  # Whether to build macOS Common static library
+  build_mac_common_static = false
+
+  # Whether to build macOS Objc Wrapper static library
+  build_mac_objc_static = false
+}

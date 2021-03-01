@@ -1,0 +1,10 @@
+source_set("base64") {
+  sources = [
+    "Base64.cpp",
+    "Base64.h",
+  ]
+
+  public = [
+    "Base64.h",
+  ]
+}
