@@ -37,6 +37,10 @@ source_set("gbe_objc_source") {
 ### iOS / macOS Objective-C Wrapper Framework ###
 #################################################
 
+config("gbe_objc_exported_symbols") {
+  ldflags = [ "-Wl,-exported_symbols_list," + rebase_path("objc_exported_symbols.txt", root_build_dir) ]
+}
+
 if (target_os == "ios") {
   import("//build/config/ios/rules.gni")
 
@@ -53,6 +57,8 @@ if (target_os == "ios") {
 
       public_headers = _gbe_objc_public_headers
       sources = public_headers
+
+      configs += [ ":gbe_objc_exported_symbols" ]
     }
   }
 
@@ -98,6 +104,8 @@ if (target_os == "mac") {
 
       public_headers = _gbe_objc_public_headers
       sources = public_headers
+
+      configs += [ ":gbe_objc_exported_symbols" ]
 
       framework_contents = [
         "Resources",

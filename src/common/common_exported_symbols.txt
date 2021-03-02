@@ -1,0 +1,2 @@
+_gn_build_example_get_version
+_gn_build_example_get_message

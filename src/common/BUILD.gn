@@ -30,6 +30,11 @@ source_set("gbe_common_source") {
 ### iOS / macOS Common Framework ###
 ####################################
 
+config("gbe_common_exported_symbols") {
+  visibility = [ ":*" ]
+  ldflags = [ "-Wl,-exported_symbols_list," + rebase_path("common_exported_symbols.txt", root_build_dir) ]
+}
+
 if (target_os == "ios") {
   import("//build/config/ios/rules.gni")
 
@@ -46,6 +51,8 @@ if (target_os == "ios") {
 
       public_headers = _gbe_common_public_headers
       sources = public_headers
+
+      configs += [ ":gbe_common_exported_symbols" ]
     }
   }
 
@@ -91,6 +98,8 @@ if (target_os == "mac") {
 
       public_headers = _gbe_common_public_headers
       sources = public_headers
+
+      configs += [ ":gbe_common_exported_symbols" ]
 
       framework_contents = [
         "Resources",
