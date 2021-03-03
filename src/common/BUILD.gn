@@ -23,6 +23,13 @@ source_set("gbe_common_source") {
 
   # No need to include root path, GN have included it by default
   # public_configs = [ "//src:gbe_root_include_config" ]
+
+  if (!defined(defines)) {
+    defines = []
+  }
+
+  # Pass 'version' string from GN to the compiler
+  defines += [ "GBE_VERSION=${gbe_version}" ]
 }
 
 

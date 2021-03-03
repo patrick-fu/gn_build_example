@@ -1,5 +1,9 @@
 
 declare_args() {
+  gbe_version = "GN_Unknown"
+}
+
+declare_args() {
   # Whether to build iOS Common shared Framework
   build_ios_common_shared = false
 
